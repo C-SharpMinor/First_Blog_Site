@@ -3,9 +3,12 @@ require('dotenv').config()
 const mongoose= require('mongoose')
 const UserRoutes= require('./routes/UserRoutes')
 const AuthRoutes= require('./routes/authRoute')
+const cors =require('cors')
+
 
 const PORT = process.env.PORT || 3000
 const app= express()
+app.use(cors({origin: 'http://localhost:5173'}))
 app.use(express.json())
 app.use('/api/user', UserRoutes)
 app.use('/api/auth', AuthRoutes)

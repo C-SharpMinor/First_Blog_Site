@@ -5,10 +5,9 @@ const {errorHandler}= require('../utils/ErrorHandlers')
 const signup= async(req, res, next)=>{
     const {username, email, password}= req.body
     const hashedPassword= await bcrypt.hash(password, 10)
-    const existingUser= await User.findOne({username})
 
     if(!username || !email || !password || username===" " || email===" " || password===" "){
-        next(errorHandler(400, "All fields are required"))
+        next(errorHandler(400, "All fields are required"))//this was the error we made, basically , the next() houses the error that is thrown
         }
 
     try{
@@ -21,14 +20,8 @@ const signup= async(req, res, next)=>{
         return res.status(201).json({msg: 'Signup successful'})
         }
         catch(error){
-            next(error)
+            next(error)//this error catches if there is an existing username or email, it was defined in the server.js
         }
-    if(existingUser.username){
-        return res.status(400).json({msg:"Username already exists"})
-    }
-    else if(existingUser.email){
-        return res.status(400).json({msg:"Another account has been registered with this email"})
-    }
     
     }
 
