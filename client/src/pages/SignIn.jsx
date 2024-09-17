@@ -8,6 +8,7 @@ import {
 	signInFailure,
 } from "../redux/User/UserSlice";
 import { useDispatch, useSelector } from "react-redux"; // in order to use the above logics we have to dispatch them so we need this too
+import OAuth from "../components/OAuth";
 
 const SignIn = () => {
 	const [formData, setFormData] = useState({});
@@ -64,7 +65,7 @@ const SignIn = () => {
 	console.log(formData);
 
 	return (
-		<div className="min-h-screen mt-20 ">
+		<div className="min-h-screen mt-20 dark:bg-[rgb(16, 23, 42)">
 			<div
 				className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row
     md:items-center"
@@ -121,6 +122,7 @@ const SignIn = () => {
 								"Sign In"
 							)}
 						</Button>
+						<OAuth />
 					</form>
 					<div className="flex gap-2 mt-2 text-sm">
 						<span> Don't have an account? </span>

@@ -67,5 +67,40 @@ const signin = async(req, res, next)=>{
     
 }
 
+const google= async(req, res, next) =>{
+    const {name, email, googlePhotoUrl}= req.body //all info we are getting from the frontend google OAuth 
+    try{
+        const user = await User.findOne({email})
+        if(user){
+            const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
+            const {password, ...rest} = user.doc;
+            res.status(200).cookie('access_token', token, {
+                httpOnly: true, //makes it more secure
+            }).json(rest)
+        }
+        //but if the email does not exist we'll have create a new user with the provided google email and since google only has the displayName and not the username, we'll set the username as the displayName provided so below we provide for if the username is not in the db
+         else{
+            const generatedPassword= Math.random().toString(36).slice(-8) //remember we are making an account using the information and we NEED a password to do that which the google info does not give us, so we are making a random pwd format
+            //this pwd is a random combination of letters and numbers, toString(36) means the random creates random letters AND numbers combined, then the slice makes us choose the last 8 characters
+            const hashedPassword= bcrypt.hash(generatedPassword, 10)
+            const newUser= new User({
+                username: name.toLowercase().split(' ').join('') + Math.random().toString(9).slice(-4), //9 means only random nubers are made
+                //Oreoluwa Onabajo => oreoluwaonabajo5629
+                email,
+                password: hashedPassword,
+                profilePic: googlePhotoUrl, //because of this we went to add a photo to the usermodel
+            })
+            await newUser.save()
+            const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET);
+            const {password, ...rest}= newUser._doc
+            res.status(200)
+            .cookie('access_token', token, {
+                httpOnly: true, 
+            }).json(rest)
+         }
+    }catch(error){
+        next(error)
+    }
+}
 
-module.exports= {signup, check, deleteUser, signin}
+module.exports= {signup, check, deleteUser, signin, google}
