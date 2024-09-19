@@ -26,9 +26,11 @@ const DashSidebar = () => {
 						<Sidebar.Item
 							active={tab === "profile"}
 							icon={HiUser}
-							label={"User"}
+							label="User"
 							labelColor="dark"
+							as="div"
 						>
+							{/* i had to put the as='div' to prevent the error of nesting an <a> inside an <a> */}
 							Profile
 						</Sidebar.Item>
 					</Link>

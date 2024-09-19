@@ -7,7 +7,6 @@ import {
 	DropdownItem,
 	Avatar,
 } from "flowbite-react";
-import "./header.css";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
@@ -21,6 +20,7 @@ const Header = () => {
 	const { currentUser } = useSelector((state) => state.user); //this is here so we caan know when the current user is available/exists. whent here is no current user, it means the person is not signed in
 	//the below is to know which theme is currently active: now  the toggle function works but we wnat the toggle button icon to change to a sun when we are currently in the dark state
 	const { theme } = useSelector((state) => state.theme);
+	console.log(currentUser);
 	return (
 		<Navbar className="border-b-2">
 			<Link

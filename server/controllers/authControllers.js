@@ -58,7 +58,7 @@ const signin = async(req, res, next)=>{
             {id: validUser._id}, process.env.JWT_SECRET, {expiresIn: '1h'}
         )
         const {password:pass, ...rest}= validUser._doc  //removing the password
-            res.status(200).cookie('accesstoken', token, {httpOnly: true}).json(rest)
+            res.status(200).cookie('access_token', token, {httpOnly: true}).json(rest)
                 
     }    
     catch(error){

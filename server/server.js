@@ -4,13 +4,14 @@ const mongoose= require('mongoose')
 const UserRoutes= require('./routes/UserRoutes')
 const AuthRoutes= require('./routes/authRoute')
 const cors =require('cors')
-
+const cookieParser= require('cookie-parser') //mind you, the cookie parser was installed inthe client not server
 
 const PORT = process.env.PORT || 3000
 const app= express()
 app.use(cors({origin: 'http://localhost:5173'}))
 app.use(express.json())
-app.use('/api/user', UserRoutes)
+app.use(cookieParser()) //did this cuz we needed it for the user verification with the jwt token
+app.use('/api/user',  UserRoutes)
 app.use('/api/auth', AuthRoutes)
 
 app.use((err, req, res, next)=>{
