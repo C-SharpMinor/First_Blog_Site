@@ -7,5 +7,5 @@ router.route('/signup').post(signup)
 router.route('/signin').post(signin)
 router.route('/').get(check)
 router.route('/delete').delete(deleteUser)
-router.route('/google', google )
-module.exports= router
+router.route('/google').post(google)
+module.exports = router

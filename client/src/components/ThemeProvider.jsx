@@ -3,11 +3,12 @@ import { useSelector } from "react-redux";
 
 const ThemeProvider = ({ children }) => {
 	const { theme } = useSelector((state) => state.theme);
+	//useSelector allows your react component to read data from the redux store made and selec t what part of the store EXACTLY that it needs. So since we've the redux store and themeSlice, we have to use the useSelctor to get the data from the store
 	return (
 		<div className={theme}>
 			<div
-				className="bg-white text-gray-700 dark:text-gray-200 dark:bg-[rgb(16, 23, 42)] 
-        min-h-screen"
+				className="bg-white text-gray-700 dark:text-gray-200 dark:bg-[rgb(16,23,42)] 
+			min-h-screen"
 			>
 				{children}
 			</div>

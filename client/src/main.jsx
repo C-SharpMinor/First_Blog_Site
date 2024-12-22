@@ -16,3 +16,10 @@ createRoot(document.getElementById("root")).render(
 		</Provider>
 	</PersistGate>
 );
+
+//the functional idea behind this is that normally, <App> is alone but now it interacts with the store through <provider>
+//when the app accesses the store, the sata it receives is stored/persisted by the persistGate. just how the persitReducer is used to persist reducers and persistor was used to persist the store
+
+//now you might ask: why are we using PersistGate to persist the stored states again when we have done that with persistStore and persistReducer?
+//the reason is the Persistor gate is like the gate of the library of books (stored data/states). It makes sure that the previously saved states are fully reloaded from storage when you open a new page or relaod the page
+//it is like the gatekeeper of the library. without it, when the page is loaded, the store might open without the imfo being fully reloaded(proper term: rehydrated), so it'll be showing like incomplete info

@@ -3,7 +3,7 @@ const errorHandler= (statusCode, message)=>{
 
     err.statusCode= statusCode
     err.message= message
-    return err
+    return err //since this err is what is being sent when an error occurs; when it gets to the frontend as 'data' after the fetch, the err is now data so we could now use the data.message
 }
 
 module.exports= {errorHandler}

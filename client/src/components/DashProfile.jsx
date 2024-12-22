@@ -1,4 +1,5 @@
-import { Alert, Button, TextInput } from "flowbite-react";
+import { Alert, Button, Modal, TextInput } from "flowbite-react";
+import { Link } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -14,17 +15,23 @@ import {
 	updateStart,
 	updateSuccess,
 	updateFailure,
+	deleteUserFailure,
+	deleteUserStart,
+	deleteUserSuccess,
+	signOutSuccess,
 } from "../redux/User/UserSlice";
 import { useDispatch } from "react-redux";
+import { HiOutlineExclamation } from "react-icons/hi";
 
 const DashProfile = () => {
-	const { currentUser } = useSelector((state) => state.user);
+	const { currentUser, error, loading } = useSelector((state) => state.user); // we only imported the error variable here for the Alert component for deleteUser. We only added the loading here state becasue we would need it to disable the updaate button when the image upload is still ongoing
 	const [imgFile, setImgFile] = useState(null); //the browser can't read this to show it so we haev to make an img url, that's what the next line is for
 	const [imgFileUrl, setImgFileUrl] = useState(null); //but just cuz the file is saved in this variable does not mean it is saved in the db. Also the db cannot use this
 	const [imageFileUploadProgress, setImageFileUploadProgress] = useState(0);
 	const [imageFileUploadError, setImageFileUploadError] = useState(null);
 	console.log(imageFileUploadProgress, imageFileUploadError);
 	const filePickerRef = useRef(null);
+	const [showModal, setShowModal] = useState(false); //works with the delete account button
 	const [formData, setFormData] = useState({}); //now to collect the info from the form for the backend to use
 	const [imgFileUploading, setImgFileUploading] = useState(false); // a user might press the update button before the image is fully uploaded so we need to set this variable to check and make sure the img is fully uploaded before the upload button can work
 	const [updateUserSuccess, setUpdateUserSuccess] = useState(null); //there are notification messages in the server for if an upload was successful or not
@@ -127,6 +134,44 @@ const DashProfile = () => {
 			setUpdateUserError(data.message);
 		}
 	};
+	const handleDeleteUser = async () => {
+		setShowModal(false);
+		try {
+			//we went to the userslice to make reducers for this
+			dispatch(deleteUserStart());
+			const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+				method: "DELETE",
+				// headers: {
+				//     'Content-Type': 'application/json'
+				// },   why wasn't there a need to add headers this time?
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				dispatch(deleteUserFailure(data.message));
+			} else {
+				dispatch(deleteUserSuccess(data));
+			}
+		} catch (error) {
+			dispatch(deleteUserFailure(error.message)); //why can't I have used next(error) here? because this is a frontend error, not a backend error
+		}
+	};
+
+	const handleSignOut = async () => {
+		try {
+			const res = await fetch("/api/user/signout", {
+				method: "POST",
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				console.log(data.message);
+			} else {
+				dispatch(signOutSuccess());
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
+
 	return (
 		<div className="max-w-lg mx-auto p-3 w-full">
 			<h1 className="my-7 text-center font-semiiteold text-3xl">Profile</h1>
@@ -201,13 +246,36 @@ const DashProfile = () => {
 					onChange={handleChange}
 				/>
 				{/* the id defines what we'll be getting the info later as(what it'll be saved as, and what we can call it as) */}
-				<Button type="submit" gradientDuoTone="purpleToBlue" outline>
-					Update
+				<Button
+					type="submit"
+					gradientDuoTone="purpleToBlue"
+					outline
+					disabled={loading || imgFileUploading}
+				>
+					{loading ? "Loading..." : "Update"}
 				</Button>
+				{/* I don't understand why the button does not show the loading text when it is loading tho, is that not what the above lin instructs? */}
+				{currentUser.isAdmin && (
+					<Link to={"/create-post"}>
+						<Button
+							type="button"
+							gradientDuoTone="purpleToPink"
+							className="w-full"
+						>
+							Create a post
+						</Button>
+					</Link>
+				)}
 			</form>
 			<div className="text-red-500 flex justify-between mt-5">
-				<span className="cursor-pointer"> Delete Account </span>
-				<span className="cursor-pointer"> Sign Out </span>
+				<span onClick={() => setShowModal(true)} className="cursor-pointer">
+					{" "}
+					Delete Account{" "}
+				</span>
+				<span onClick={handleSignOut} className="cursor-pointer">
+					{" "}
+					Sign Out{" "}
+				</span>
 			</div>
 			{updateUserSuccess && ( //ot's cuz we knew we'd be using the updateUserSuccess state as an if statement here(we are saying if this variable exists, then ...) that when setting the state, we set the initial value to null not false, cuz false would mean it still exists and this code would run immediately you open the page
 				<Alert color="success" className="mt-5">
@@ -219,6 +287,38 @@ const DashProfile = () => {
 					{updateUserError}
 				</Alert>
 			)}
+			{error && (
+				<Alert color="failure" className="mt-5">
+					{error}
+				</Alert>
+			)}
+			<Modal
+				show={showModal}
+				onClose={() => setShowModal(false)}
+				popup
+				size="md"
+			>
+				<Modal.Header />
+				<Modal.Body>
+					<div className="text-center">
+						<HiOutlineExclamation
+							className="h-14 w-14 text-gray-400 
+                        dark:text-gray-200 mb-4 mx-auto"
+						/>
+						<h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+							Are you sure you want to delete your account
+						</h3>
+						<div className="flex gap-5 justify-center">
+							<Button color="failure" onClick={handleDeleteUser}>
+								Yes, I'm sure
+							</Button>
+							<Button color="gray" onClick={() => setShowModal(false)}>
+								No, Cancel
+							</Button>
+						</div>
+					</div>
+				</Modal.Body>
+			</Modal>
 		</div>
 	);
 };

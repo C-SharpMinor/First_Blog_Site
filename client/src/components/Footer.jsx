@@ -20,7 +20,7 @@ const FooterComp = () => {
 							Blog
 						</Link>
 					</div>
-					<div className=" grid grid-cols-2 gap-8 sm: mt-4 sm:grid-cols-3 sm:gap-6">
+					<div className=" grid grid-cols-2 gap-8 sm:mt-4 sm:grid-cols-3 sm:gap-6">
 						<div>
 							{" "}
 							{/* this is the first column, we had to put the footer title and linkgroup in another div cuz other wise, it causes them to appear in rows */}

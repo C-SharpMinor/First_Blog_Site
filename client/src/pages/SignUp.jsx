@@ -3,12 +3,18 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import OAuth from "../components/OAuth";
+import {
+	signInFailure,
+	signInStart,
+	signInSuccess,
+} from "../redux/User/UserSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SignUp = () => {
 	const [formData, setFormData] = useState({});
-	const [errorMsg, setErrorMsg] = useState(null);
-	const [loading, setLoading] = useState(false);
+	const { loading, error: errorMsg } = useSelector((state) => state.user); //this is to get the loading and error from the user slice
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -19,13 +25,13 @@ const SignUp = () => {
 
 		//having handled the error if an empty field is provided in the backend, we have to do the same for the frontend as well
 		if (!formData.username || !formData.email || !formData.password) {
-			return setErrorMsg("All fields are required");
+			dispatch(signInFailure("All fields are required"));
 		}
 
 		try {
-			setLoading(true); //the loadign starts when the form is submitted
-			setErrorMsg(null); // we have to remove the former errormsg value that might have been saved fromt he user's previous activity
-
+			// setLoading(true); //the loadign starts when the form is submitted
+			// setErrorMsg(null); // we have to remove the former errormsg value that might have been saved fromt he user's previous activity
+			dispatch(signInStart());
 			//encounterd a serious problem below, the cors was blocking from retrieving data from the
 			//server even tho i had wriiten the proxy for the server in the vite.config.js So i had to do app.use(cors...) in server.js
 			const res = await fetch("/api/auth/signup", {
@@ -36,16 +42,15 @@ const SignUp = () => {
 			const data = await res.json();
 
 			if (data.success === false) {
-				setLoading(false);
-				return setErrorMsg(data.message); // this is to get the error message the backend will show in case of sth like an already-existing username
+				dispatch(signInFailure(data.message)); // this is to get the error message the backend will show in case of sth like an already-existing username
 			}
-			setLoading(false);
+
 			if (res.ok) {
+				dispatch(signInSuccess(data));
 				navigate("/sign-in");
 			}
 		} catch (error) {
-			setErrorMsg(error.message); //for errors we haven't already provided for usually from the client not backend eg user isn't with internet
-			setLoading(false);
+			dispatch(signInFailure(error.message)); //for errors we haven't already provided for usually from the client not backend eg user isn't with internet
 		}
 	};
 	console.log(formData);
@@ -61,7 +66,7 @@ const SignUp = () => {
 					{/*for the fact that flex was used for the div that contains the left and right divs, this causes the divs to be unequal, the left div will be bigger than the right. so to ensure they take equal space, we use this flex-1 */}
 					<Link
 						to="/"
-						className="font-bold font-semibold dark:text-white
+						className="font-semibold dark:text-white
         text-4xl"
 					>
 						<span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">

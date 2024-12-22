@@ -22,7 +22,7 @@ const OAuth = () => {
 			const res = await fetch("/api/auth/google", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				bpdy: JSON.stringify({
+				body: JSON.stringify({
 					name: resultsFromGoogle.user.displayName,
 					email: resultsFromGoogle.user.email,
 					GooglePhotoUrl: resultsFromGoogle.user.photoURL,
@@ -35,6 +35,7 @@ const OAuth = () => {
 			}
 		} catch (error) {
 			console.log(error);
+			alert("Failed to sign in with Google. Please try again");
 		}
 	};
 	return (

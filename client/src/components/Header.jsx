@@ -1,18 +1,13 @@
 import React from "react";
-import {
-	Navbar,
-	TextInput,
-	Button,
-	Dropdown,
-	DropdownItem,
-	Avatar,
-} from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux"; //we want the sign in button at the header to show the user profile img, not sign in btn when he is signed in. that's the purpose of this
-//the reason we needed useDispatch her is because we wanted to use the toggleTheme function in the MOon button
+//the reason we needed useDispatch here is because we wanted to use the toggleTheme function in the Moon button
 import { toggleTheme } from "../redux/theme/themeSlice";
+import { signOutSuccess } from "../redux/User/UserSlice";
+import { useState, useEffect } from "react";
 
 const Header = () => {
 	const path = useLocation().pathname;
@@ -20,25 +15,64 @@ const Header = () => {
 	const { currentUser } = useSelector((state) => state.user); //this is here so we caan know when the current user is available/exists. whent here is no current user, it means the person is not signed in
 	//the below is to know which theme is currently active: now  the toggle function works but we wnat the toggle button icon to change to a sun when we are currently in the dark state
 	const { theme } = useSelector((state) => state.theme);
+	const [searchTerm, setSearchTerm] = useState("");
+	const location = useLocation(); //using this for the search as well
+	console.log(searchTerm);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const urlParams = new URLSearchParams(location.search);
+		const searchTermFromUrl = urlParams.get("searchTerm");
+		if (searchTermFromUrl) {
+			setSearchTerm(searchTermFromUrl);
+		}
+	}, [location.search]); //location.search is the query string in the url
+
 	console.log(currentUser);
+
+	const handleSignOut = async () => {
+		try {
+			const res = await fetch("/api/user/signout", {
+				method: "POST",
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				console.log(data.message);
+			} else {
+				dispatch(signOutSuccess());
+			}
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		const urlParams = new URLSearchParams(location.search);
+		urlParams.set("searchTerm", searchTerm);
+		const searchQuery = urlParams.toString();
+		navigate(`/search?${searchQuery}`);
+	};
 	return (
 		<Navbar className="border-b-2">
 			<Link
 				to="/"
 				className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
 			>
-				<span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
+				<span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-red-500 rounded-lg text-white">
 					Ore's
 				</span>
 				Blog
 			</Link>
-			<form className="flex items-center">
+			<form className="flex items-center" onSubmit={handleSubmit}>
 				{/* this element below is from flowbite*/}
 				<TextInput
 					type="text"
 					placeholder="Search..."
 					rightIcon={AiOutlineSearch}
 					className="hidden lg:block"
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
 				/>
 			</form>
 			<Button className="w-12 h-10 lg:hidden" color="gray" pill>
@@ -70,7 +104,7 @@ const Header = () => {
 							<Dropdown.Item> Profile</Dropdown.Item>
 						</Link>
 						<Dropdown.Divider />
-						<Dropdown.Item>Sign Out</Dropdown.Item>
+						<Dropdown.Item onClick={handleSignOut}>Sign Out</Dropdown.Item>
 					</Dropdown>
 				) : (
 					<Link to="/sign-in">
@@ -80,20 +114,22 @@ const Header = () => {
 					</Link>
 				)}
 				<Navbar.Toggle />
+				{/* the above is what shows the hamurger icon for smaller screen, then the navbar.collapse collapse inside this icon 
+				if it is not a small scrren the hamburger will not show and the collapse doesn't collapse and just shows as like a horizontal list */}
 			</div>
 			<Navbar.Collapse>
 				{" "}
 				{/* we wanted these links to be before the things in the div so they had to be out of the div and the div shows after it cuz we set hte order to be 2*/}
 				<Navbar.Link active={path === "/"} as={"div"}>
 					{" "}
-					{/*two anchor tags are not allowd inside each other so we specifed that the navbar.collapse was a div, so it's an anchor tag atill but now acts like a div*/}
+					{/*two anchor tags are not allowd inside each other so we specifed that the navbar.link was a div, so it's an anchor tag atill but now acts like a div*/}
 					<Link to="/">Home</Link>
 				</Navbar.Link>
 				<Navbar.Link active={path === "/about"} as={"div"}>
 					<Link to="/about">About</Link>
 				</Navbar.Link>
 				<Navbar.Link active={path === "/projects"} as={"div"}>
-					<Link to="/projects">Projects</Link>
+					<Link to="/projects"> Projects</Link>
 				</Navbar.Link>
 			</Navbar.Collapse>
 		</Navbar>

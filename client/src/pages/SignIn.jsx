@@ -20,7 +20,7 @@ const SignIn = () => {
 	const navigate = useNavigate();
 
 	const handleChange = (e) => {
-		setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+		setFormData({ ...formData, [e.target.id]: e.target.value.trim() }); //the trim method removes whitespaces from the beginning and end of a string
 	};
 	const handleSubmit = async (e) => {
 		//we have to make this async now since we are taking data to the db and it will take time to fetch the data
@@ -28,8 +28,10 @@ const SignIn = () => {
 
 		//having handled the error if an empty field is provided in the backend, we have to do the same for the frontend as well
 		if (!formData.email || !formData.password) {
-			// return setErrorMsg("All fields are required");   replaced by dispatch
-			dispatch(signInFailure("All fields are required"));
+			// return setErrorMsg("All fields are required"); replaced by dispatch
+			dispatch(signInFailure("All fields are required")); //for a dispatch , whatever is inside the reducer's brakcet is the payload(ie goes for action.payload)
+
+			//we could've handled this error with thte backend since we had made provisios for exactly this there too. but i guess this is to prevent watsed resource going to the backend
 		}
 
 		try {
@@ -45,11 +47,28 @@ const SignIn = () => {
 				body: JSON.stringify(formData),
 			});
 			const data = await res.json();
+			console.log(res); //houses information on the response, if it was ok, the headers, status, etc
+			console.log(data); //houses whatever IS RETURNED by backend
+
+			//axios can also be used to get data from backend, so THERE ARE 2 WAYS YOU CAN RETRIEVE backend data. check *** project to see how i used axios.
+			//axios automatically turns the formData to json but with fetch, you convert it yourself. but with axios, you have to install the dependency. so fetch is nice for smaller projects
+			//ALSO, in fetch we had to get the json of the res. you just do res.data in axios
+			//in axios, the above command would've been rep. as
+			// try {
+			// 	const res = await axios.post("/api/auth/signin", formData, {
+			// 	  headers: { "Content-Type": "application/json" },
+			// 	});
+			// 	console.log(res.data);
+			//   } catch (error) {
+			// 	console.error("Failed to sign in:", error.response.status);
+			//   }
 
 			if (data.success === false) {
 				//setLoading(false);
 				// return setErrorMsg(data.message); *replaced by the dispatch code* // this is to get the error message the backend will show in case of sth like an already-existing username
 				dispatch(signInFailure(data.message));
+				//in this place, in the backend i explained that 'data' is now the 'err' returned there.
+				//So the data.message works cuz i wrote err.message there. if i had written err.shsghsf I'd have to put data.shsghsf
 			}
 			// setLoading(false);  no longer requiresd since the dispatch functions have been written to set the loading to false
 			if (res.ok) {
@@ -65,7 +84,7 @@ const SignIn = () => {
 	console.log(formData);
 
 	return (
-		<div className="min-h-screen mt-20 dark:bg-[rgb(16, 23, 42)">
+		<div className="min-h-screen mt-20">
 			<div
 				className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row
     md:items-center"
@@ -75,7 +94,7 @@ const SignIn = () => {
 					{/*for the fact that flex was used for the div that contains the left and right divs, this causes the divs to be unequal, the left div will be bigger than the right. so to ensure they take equal space, we use this flex-1 */}
 					<Link
 						to="/"
-						className="font-bold font-semibold dark:text-white
+						className="font-semibold dark:text-white
         text-4xl"
 					>
 						<span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">

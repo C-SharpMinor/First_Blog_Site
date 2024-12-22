@@ -17,8 +17,13 @@ const UserModel= new mongoose.Schema({
     },
     profilePic:{
         type: String,
-        unique: true,
+        required: true,
         default: "https://cdn-icons-png.flaticon.com/512/6596/6596121.png"
+        
+    },
+    isAdmin:{
+        type: Boolean,
+        default: false,
     }
 },
 {timestamps: true})
