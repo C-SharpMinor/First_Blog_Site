@@ -86,6 +86,14 @@ const Header = () => {
 					pill
 					onClick={() => dispatch(toggleTheme())}
 				>
+					{/* to understand this, you have to know how the selector, dispatch and reducer work hand in hand for this function above to work
+					the selector is what watches the state of the variable. It tells the current state of the variable. this is why we passed it ino the theme variable and used it to check if the theme is light or dark in the next line of code
+					the dispatch is what sends the action to the reducer you made in themeSlice. So it is not the dispatch that is doing the action, it is just like a mini API that sends tells the reducer in the 'backend' to perform whatever action 
+					we have dictated there. and that's why we wrote in themeSlice that when the toggleTheme is called, it should change the state from light to dark or vice versa   
+					and that's how it all relates to the reducer we write in the themeSlice. 
+					ALL THE REDUCER IS DOING IS CHANGING THE STATE VARIABLE FROM 'LIGHT' TO 'DARK'. IT DOES NOT CHANGE THE COLOR OR SUN ICON. 
+					IT IS WHEN WE COME HERE WE NOW USE THAT STATE TO CHANGE THE ICON  */}
+					
 					{theme === "light" ? <FaMoon /> : <FaSun />}
 				</Button>
 				{currentUser ? (
