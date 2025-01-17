@@ -92,7 +92,8 @@ const Header = () => {
 					we have dictated there. and that's why we wrote in themeSlice that when the toggleTheme is called, it should change the state from light to dark or vice versa   
 					and that's how it all relates to the reducer we write in the themeSlice. 
 					ALL THE REDUCER IS DOING IS CHANGING THE STATE VARIABLE FROM 'LIGHT' TO 'DARK'. IT DOES NOT CHANGE THE COLOR OR SUN ICON. 
-					IT IS WHEN WE COME HERE WE NOW USE THAT STATE TO CHANGE THE ICON  */}
+					IT IS WHEN WE COME HERE WE NOW USE THAT STATE TO CHANGE THE ICON  
+					After doing all this the last hting is to add the <Provider /> and store to the main.jsx, it is the provider that connects your react app to the redux store*/}
 					
 					{theme === "light" ? <FaMoon /> : <FaSun />}
 				</Button>
