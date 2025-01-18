@@ -57,6 +57,18 @@ const initialState = {
         } 
     })
 
+
+//i wondered where action.payload gets its information from. we are not assinging it to get it from the server or anything like that
+//here's how it works. the reason action payload is here is because when you dispatch an actoin in the react app, it causes an action object to be automatically made. this is one of redux' features
+// the action object contains where it is going to and the data you have assigned to it. For example,
+// for dispatch(signInSuccess(payloadData)), the actoin object looks like this.
+// {
+//     type: "user/signInSuccess", // Automatically set by the slice name and reducer function name
+//     payload: payloadData, // Whatever data you passed as the argument to the action
+//   }
+
+//so we make the reducer collect the payload and store it inside the state. Thus, we can use the state in the react app with useSelector
+
     export const {signInStart,
          signInSuccess, 
          signInFailure, 
