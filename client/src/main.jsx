@@ -17,6 +17,8 @@ createRoot(document.getElementById("root")).render(
 	</PersistGate>
 );
 
+//we are passing persistor in provideGate cuz the gate needs to persist the store to regulate rehydration. Obvi we are passigns to store into Provider cuz it connects it to the app.jsx
+
 //the functional idea behind this is that normally, <App> is alone but now it interacts with the store through <provider>
 //when the app accesses the store, the sata it receives is stored/persisted by the persistGate. just how the persitReducer is used to persist reducers and persistor was used to persist the store
 
