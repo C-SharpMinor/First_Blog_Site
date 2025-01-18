@@ -6,7 +6,7 @@ import storage from 'redux-persist/lib/storage'
 
 // the root reducer removes the need for various reducers
 const rootReducer= combineReducers({
-    user: userReducer,
+    user: userReducer, //the key you put here has to tally with the name you gave to the Slice when created. cuz theis determines how you call the reducer (eg state.theme, state.user) in the react app
     theme: themeReducer,
 })
 
