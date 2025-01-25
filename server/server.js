@@ -6,7 +6,7 @@ const AuthRoutes= require('./routes/authRoute')
 const PostRoutes= require('./routes/postRoute')
 const CommentRoutes= require('./routes/commentRoute')
 const cors =require('cors')
-const cookieParser= require('cookie-parser') //mind you, the cookie parser was installed inthe client not server
+const cookieParser= require('cookie-parser')
 
 const PORT = process.env.PORT || 3000
 const app= express()
